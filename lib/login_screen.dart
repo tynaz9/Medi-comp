@@ -1,3 +1,4 @@
+import 'package:f_medi_minders/landing_main_page.dart';
 import 'package:f_medi_minders/resrt_password_screen.dart';
 import 'package:f_medi_minders/welcome_main_screen.dart';
 //import 'package:f_medi_minders/welcome_screen.dart';
@@ -37,7 +38,7 @@ class _LoginState extends State<LoginScreen> {
         // ✅ Navigate ONLY if login is correct
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const WelcomeMainScreen()),
+          MaterialPageRoute(builder: (_) => const LandingMainPage()),
         );
       } else {
         // ❌ Show error if login fails
