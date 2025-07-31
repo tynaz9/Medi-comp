@@ -1,7 +1,8 @@
 import 'package:f_medi_minders/mediremainder.dart';
+import 'package:f_medi_minders/water_intake_sreen.dart';
 import 'package:f_medi_minders/welcome_main_screen.dart';
 import 'package:f_medi_minders/welcome_yoga_screen.dart';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
     {
       "title": "Water Reminder",
       "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/d6/67/64/d66764ec-189b-fa7d-cb07-420b146e273d/AppIcon-1x_U007emarketing-0-5-0-85-220.png/1200x600wa.png",
-      "screen": const WaterReminderScreen(),
+      "screen": const WaterReminderApp(),
     },
   ];
 

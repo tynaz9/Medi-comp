@@ -1,22 +1,37 @@
-import 'package:device_preview/device_preview.dart';
-import 'package:f_medi_minders/landing_main_page.dart';
-import 'package:f_medi_minders/mediremainder.dart';
-import 'package:f_medi_minders/landing_screen.dart';
 import 'package:f_medi_minders/welcome_home_screen.dart';
 import 'package:flutter/material.dart';
 
-//void main() => runApp(const BMIApp());
-void main(){
-  runApp(DevicePreview(builder: (_)=>BMIApp()));
+// ✅ Import notification service
+import 'services/notification_service.dart';
+
+Future<void> main() async {
+  // ✅ Ensure Flutter is fully initialized before any plugins run
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Initialize notification service (local notifications, timezone setup)
+  await NotificationService.init();
+
+  // ✅ Run app with DevicePreview for easier testing on multiple devices
+  /*runApp(
+    DevicePreview(
+      enabled: true, // set to false for production
+      builder: (_) => const MediMinderApp(),
+    ),
+  );*/
+  runApp(const MediMinderApp());
 }
 
-class BMIApp extends StatelessWidget {
-  const BMIApp({super.key});
+class MediMinderApp extends StatelessWidget {
+  const MediMinderApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: const WelcomeHomeScreen(),
-        //home:LandingMainPage(),
-      );
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      //useInheritedMediaQuery: true, // ✅ for DevicePreview
+      //builder: DevicePreview.appBuilder, // ✅ wraps widgets for preview
+      home: const WelcomeHomeScreen(),
+      // home: LandingMainPage(),  // you can switch if needed
+    );
+  }
 }

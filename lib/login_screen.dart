@@ -1,6 +1,6 @@
 import 'package:f_medi_minders/landing_main_page.dart';
 import 'package:f_medi_minders/resrt_password_screen.dart';
-import 'package:f_medi_minders/welcome_main_screen.dart';
+//import 'package:f_medi_minders/welcome_main_screen.dart';
 //import 'package:f_medi_minders/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';

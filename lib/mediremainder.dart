@@ -1,7 +1,9 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:device_preview/device_preview.dart';
+
+// ✅ NEW: Import Notification Service
+import 'services/notification_service.dart';
 
 class MediReminderApp extends StatelessWidget {
   const MediReminderApp({super.key});
@@ -47,12 +49,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedDateIndex = 0;
-  List<DateTime> dateList = List.generate(10, (i) => DateTime.now().add(Duration(days: i)));
+  List<DateTime> dateList =
+      List.generate(10, (i) => DateTime.now().add(Duration(days: i)));
   List<Medicine> medicines = [];
 
   void openAddMedicineSheet() {
     showModalBottomSheet(
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (_) => AddMedicineSheet(
         onSave: (medicine) {
@@ -73,15 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final selectedDate = dateList[selectedDateIndex];
     final currentMonth = DateFormat.MMMM().format(selectedDate);
-    final filteredMeds = medicines.where((m) =>
-        m.date.year == selectedDate.year &&
-        m.date.month == selectedDate.month &&
-        m.date.day == selectedDate.day).toList();
+    final filteredMeds = medicines
+        .where((m) =>
+            m.date.year == selectedDate.year &&
+            m.date.month == selectedDate.month &&
+            m.date.day == selectedDate.day)
+        .toList();
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Text(currentMonth, style: const TextStyle(color: Colors.white, fontSize: 22)),
+        title: Text(currentMonth,
+            style: const TextStyle(color: Colors.white, fontSize: 22)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -90,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF84A9FC), Color(0xFF4768FF)],
+              colors: [Color(0xFFA8C0FF), Color(0xFF667EEA)],
             ),
           ),
         ),
@@ -98,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF84A9FC), Color(0xFF4768FF)],
+            colors: [Color(0xFFA8C0FF), Color(0xFF667EEA)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -110,20 +117,35 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: filteredMeds.isEmpty
-                  ? const Center(child: Text("No medicines added yet", style: TextStyle(color: Colors.white)))
+                  ? const Center(
+                      child: Text("No medicines added yet",
+                          style: TextStyle(color: Colors.white, fontSize: 16)))
                   : ListView.builder(
                       itemCount: filteredMeds.length,
                       itemBuilder: (context, index) {
                         final med = filteredMeds[index];
-                        return ListTile(
-                          leading: Checkbox(
-                            value: med.isChecked,
-                            onChanged: (val) => setState(() => med.isChecked = val!),
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          color: Colors.white.withOpacity(0.9),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          title: Text(med.name, style: const TextStyle(color: Colors.white)),
-                          subtitle: Text(
-                            '${med.type} • ${med.time.format(context)} - ${med.timeOfDay} - Dose: ${med.dose}',
-                            style: const TextStyle(color: Colors.white70),
+                          child: ListTile(
+                            leading: Checkbox(
+                              value: med.isChecked,
+                              activeColor: Colors.deepPurple,
+                              onChanged: (val) =>
+                                  setState(() => med.isChecked = val!),
+                            ),
+                            title: Text(med.name,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                              '${med.type} • ${med.time.format(context)} - ${med.timeOfDay} - Dose: ${med.dose}',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
                           ),
                         );
                       },
@@ -134,11 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: openAddMedicineSheet,
-        backgroundColor: Colors.blueAccent,
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.deepPurpleAccent,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         child: SizedBox(
@@ -146,14 +169,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              const Icon(Icons.home, color: Colors.blueAccent),
-              const Icon(Icons.note_alt_outlined),
+              const Icon(Icons.home, color: Colors.deepPurpleAccent),
+              const Icon(Icons.note_alt_outlined, color: Colors.black54),
               const SizedBox(width: 40),
               GestureDetector(
                 onTap: openProfileScreen,
-                child: const Icon(Icons.person_outline),
+                child: const Icon(Icons.person_outline, color: Colors.black54),
               ),
-              const Icon(Icons.menu),
+              const Icon(Icons.menu, color: Colors.black54),
             ],
           ),
         ),
@@ -177,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 6),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
+                color: isSelected ? Colors.white : Colors.white24,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -186,11 +209,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(DateFormat.d().format(date),
                       style: TextStyle(
                           fontSize: 16,
-                          color: isSelected ? Colors.blue : Colors.white,
+                          color: isSelected ? Colors.deepPurple : Colors.white,
                           fontWeight: FontWeight.bold)),
                   Text(DateFormat.E().format(date),
                       style: TextStyle(
-                          color: isSelected ? Colors.blueAccent : Colors.white70, fontSize: 12)),
+                          color: isSelected
+                              ? Colors.deepPurpleAccent
+                              : Colors.white70,
+                          fontSize: 12)),
                 ],
               ),
             ),
@@ -218,8 +244,20 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
   final List<bool> _timeOfDay = [true, false, false];
   int _selectedTypeIndex = 0;
 
-  final List<String> _types = ['Tablets', 'Capsules', 'Syrup', 'Drops', 'Injections'];
-  final List<IconData> _icons = [Icons.medication, Icons.medical_services, Icons.local_drink, Icons.opacity, Icons.vaccines];
+  final List<String> _types = [
+    'Tablets',
+    'Capsules',
+    'Syrup',
+    'Drops',
+    'Injections'
+  ];
+  final List<IconData> _icons = [
+    Icons.medication,
+    Icons.medical_services,
+    Icons.local_drink,
+    Icons.opacity,
+    Icons.vaccines
+  ];
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -241,7 +279,11 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         top: 16,
@@ -250,27 +292,42 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
       ),
       child: Wrap(
         children: [
-          const Center(child: Text("Add Medicine", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          const Center(
+              child: Text("Add Medicine",
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold))),
           const SizedBox(height: 20),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: "Medicine Name", border: OutlineInputBorder()),
+            decoration: InputDecoration(
+              labelText: "Medicine Name",
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              const Text("Date:"), const SizedBox(width: 8),
+              const Text("Date:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(width: 8),
               Text(DateFormat.yMMMMd().format(_selectedDate)),
               const Spacer(),
-              TextButton(onPressed: _pickDate, child: const Text("Pick Date")),
+              TextButton(
+                  onPressed: _pickDate,
+                  child: const Text("Pick Date",
+                      style: TextStyle(color: Colors.deepPurpleAccent))),
             ],
           ),
           Row(
             children: [
-              const Text("Time:"), const SizedBox(width: 8),
+              const Text("Time:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(width: 8),
               Text(_selectedTime.format(context)),
               const Spacer(),
-              TextButton(onPressed: _pickTime, child: const Text("Pick Time")),
+              TextButton(
+                  onPressed: _pickTime,
+                  child: const Text("Pick Time",
+                      style: TextStyle(color: Colors.deepPurpleAccent))),
             ],
           ),
           const SizedBox(height: 12),
@@ -285,15 +342,22 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
             },
             borderRadius: BorderRadius.circular(8),
             selectedColor: Colors.white,
-            fillColor: Colors.blueAccent,
+            fillColor: Colors.deepPurpleAccent,
             children: const [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Morning")),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Afternoon")),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Evening")),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text("Morning")),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text("Afternoon")),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text("Evening")),
             ],
           ),
           const SizedBox(height: 12),
-          const Text("Medicine Type:"),
+          const Text("Medicine Type:",
+              style: TextStyle(fontWeight: FontWeight.bold)),
           Wrap(
             spacing: 10,
             children: List.generate(_types.length, (index) {
@@ -307,26 +371,59 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
                     Text(_types[index]),
                   ],
                 ),
-                onSelected: (selected) => setState(() => _selectedTypeIndex = index),
+                selectedColor: Colors.deepPurpleAccent.withOpacity(0.2),
+                onSelected: (selected) =>
+                    setState(() => _selectedTypeIndex = index),
               );
             }),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              const Text("Dose:"),
-              IconButton(icon: const Icon(Icons.remove), onPressed: () {
-                if (_doseCount > 1) setState(() => _doseCount--);
-              }),
+              const Text("Dose:",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    if (_doseCount > 1) setState(() => _doseCount--);
+                  }),
               Text('$_doseCount'),
-              IconButton(icon: const Icon(Icons.add), onPressed: () => setState(() => _doseCount++)),
+              IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => setState(() => _doseCount++)),
             ],
           ),
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {
-              if (_nameController.text.trim().isEmpty) return;
+              if (_nameController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("⚠️ Please enter a medicine name")),
+                );
+                return;
+              }
+
               final timeStr = ['Morning', 'Afternoon', 'Evening'];
+
+              // ✅ Combine selected date & time into DateTime
+              final scheduledDate = DateTime(
+                _selectedDate.year,
+                _selectedDate.month,
+                _selectedDate.day,
+                _selectedTime.hour,
+                _selectedTime.minute,
+              );
+
+              // ✅ Schedule ALARM instead of normal notification
+              NotificationService.scheduleAlarm(
+                id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                title: "⏰ Time to take ${_nameController.text.trim()} 💊",
+                body: "${_doseCount} dose(s) - ${_types[_selectedTypeIndex]}",
+                scheduledDate: scheduledDate,
+              );
+
+              // ✅ Save medicine entry to list
               widget.onSave(
                 Medicine(
                   name: _nameController.text.trim(),
@@ -337,13 +434,17 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
                   type: _types[_selectedTypeIndex],
                 ),
               );
+
               Navigator.pop(context);
             },
             icon: const Icon(Icons.save),
             label: const Text("Save Medicine"),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.deepPurpleAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -353,6 +454,7 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
   }
 }
 
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -361,7 +463,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.deepPurpleAccent,
       ),
       body: const Center(
         child: Text("User Profile Page", style: TextStyle(fontSize: 20)),
