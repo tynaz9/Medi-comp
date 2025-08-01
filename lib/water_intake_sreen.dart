@@ -1,4 +1,5 @@
 //import 'package:flutter/foundation.dart';
+import 'package:f_medi_minders/landing_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:intl/intl.dart';
@@ -151,6 +152,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> LandingMainPage()));
+        }, icon: Icon(Icons.arrow_back),color: Colors.black,),
         title: const Text("Water Reminder"),
         centerTitle: true,
         backgroundColor: Colors.transparent,

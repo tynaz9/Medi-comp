@@ -11,18 +11,14 @@ class WelcomeHomeScreen extends StatelessWidget {
       //backgroundColor: const Color(0xFF4D9B91), // Custom teal color
       body: Stack(
         children: [
-         Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.blue,Colors.white]),
-          ),
-         ),
+          Image.asset('assets/bk.jpg',fit: BoxFit.cover,height: double.infinity,),
+         
           Column(
             //mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
+              const Spacer(
+                flex: 1,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(

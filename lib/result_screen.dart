@@ -152,6 +152,7 @@ class ResultScreen extends StatelessWidget {
 }
 */
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:f_medi_minders/landing_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:f_medi_minders/input_screen.dart';
 
@@ -362,20 +363,40 @@ class ResultScreen extends StatelessWidget {
 
                 const SizedBox(height: 40),
 
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const InputScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade900,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 15),
-                  ),
-                  child: const Text(
-                    "RETRY",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
+                Row(
+                  spacing: 20,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const InputScreen()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade900,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
+                      ),
+                      child: const Text(
+                        "RETRY",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const HomePage()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade900,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
+                      ),
+                      child: const Text(
+                        "HOME",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 50),
               ],

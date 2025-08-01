@@ -1,5 +1,6 @@
-import 'package:f_medi_minders/welcome_home_screen.dart';
+import 'package:f_medi_minders/landing_screen.dart';
 import 'package:flutter/material.dart';
+//import 'package:device_preview/device_preview.dart';
 
 // ✅ Import notification service
 import 'services/notification_service.dart';
@@ -28,9 +29,7 @@ class MediMinderApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //useInheritedMediaQuery: true, // ✅ for DevicePreview
-      //builder: DevicePreview.appBuilder, // ✅ wraps widgets for preview
-      home: const WelcomeHomeScreen(),
+      home: LandingPage(),
       // home: LandingMainPage(),  // you can switch if needed
     );
   }

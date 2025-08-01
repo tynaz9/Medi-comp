@@ -1,3 +1,4 @@
+import 'package:f_medi_minders/landing_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:device_preview/device_preview.dart';
@@ -169,7 +170,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              const Icon(Icons.home, color: Colors.deepPurpleAccent),
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>HomePage()));
+                },
+                child: const Icon(Icons.home, color: Colors.black54),
+              ),
+              //const Icon(Icons.home, color: Colors.black54),
               const Icon(Icons.note_alt_outlined, color: Colors.black54),
               const SizedBox(width: 40),
               GestureDetector(
