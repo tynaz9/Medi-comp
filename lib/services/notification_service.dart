@@ -6,7 +6,7 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// ✅ Call this in main.dart before runApp()
+  /// ✅ Initialize notifications
   static Future<void> init() async {
     tz.initializeTimeZones();
 
@@ -17,9 +17,34 @@ class NotificationService {
         InitializationSettings(android: androidInit);
 
     await _notificationsPlugin.initialize(initSettings);
+
+    // ✅ Request permission for Android 13+
+    await _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
-  /// ✅ Normal reminder notification
+  /// 🔔 Show an instant reminder notification
+  static Future<void> showInstantNotification() async {
+    await _notificationsPlugin.show(
+      1,
+      "💊 Take Your Medicine",
+      "It's time for your dose! Stay healthy! 🩺",
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'instant_channel',
+          'Instant Notifications',
+          channelDescription: 'Shows notifications instantly',
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: true,
+        ),
+      ),
+    );
+  }
+
+  /// ⏱ Schedule a reminder for later
   static Future<void> scheduleNotification({
     required int id,
     required String title,
@@ -33,9 +58,9 @@ class NotificationService {
       tz.TZDateTime.from(scheduledDate, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'medi_channel', // channel ID
-          'Medicine Reminders', // channel name
-          channelDescription: 'Reminds users to take medicine',
+          'scheduled_channel',
+          'Scheduled Notifications',
+          channelDescription: 'Medicine reminders for scheduled times',
           importance: Importance.high,
           priority: Priority.high,
           playSound: true,
@@ -44,39 +69,27 @@ class NotificationService {
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dateAndTime,
     );
   }
 
-  /// 🔥 ALARM version – LOUD sound, vibration & fullscreen
-  static Future<void> scheduleAlarm({
-    required int id,
-    required String title,
-    required String body,
-    required DateTime scheduledDate,
-  }) async {
-    await _notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
+  /// 🔥 Fired (simulated medicine reminder alarm)
+  static Future<void> fireReminderNotification() async {
+    await _notificationsPlugin.show(
+      2,
+      "🚨 Medicine Reminder",
+      "Your alarm is ringing! Take your pill NOW! 💊",
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'alarm_channel', // different channel for alarms
-          'Medicine Alarms',
-          channelDescription: 'Rings loudly like an alarm',
+          'fired_channel',
+          'Medicine Alarm',
+          channelDescription: 'Loud alarm-style medicine reminder',
           importance: Importance.max,
           priority: Priority.max,
           playSound: true,
-          sound: RawResourceAndroidNotificationSound('alarm'), // ✅ use alarm.mp3
           enableVibration: true,
-          fullScreenIntent: true, // ✅ pops up full screen like alarm
+          fullScreenIntent: true,
         ),
       ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dateAndTime,
     );
   }
 }

@@ -1,25 +1,8 @@
-import 'package:f_medi_minders/landing_main_page.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:device_preview/device_preview.dart';
-
-// ✅ NEW: Import Notification Service
+import 'package:shared_preferences/shared_preferences.dart';
 import 'services/notification_service.dart';
-
-class MediReminderApp extends StatelessWidget {
-  const MediReminderApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      useInheritedMediaQuery: true,
-      builder: DevicePreview.appBuilder,
-      title: 'Medi Reminder',
-      debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
-    );
-  }
-}
 
 class Medicine {
   final String name;
@@ -39,20 +22,64 @@ class Medicine {
     required this.type,
     this.isChecked = false,
   });
+
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'date': date.toIso8601String(),
+        'timeHour': time.hour,
+        'timeMinute': time.minute,
+        'timeOfDay': timeOfDay,
+        'dose': dose,
+        'type': type,
+        'isChecked': isChecked,
+      };
+
+  factory Medicine.fromMap(Map<String, dynamic> map) => Medicine(
+        name: map['name'],
+        date: DateTime.parse(map['date']),
+        time: TimeOfDay(hour: map['timeHour'], minute: map['timeMinute']),
+        timeOfDay: map['timeOfDay'],
+        dose: map['dose'],
+        type: map['type'],
+        isChecked: map['isChecked'],
+      );
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MediReminderApp extends StatefulWidget {
+  const MediReminderApp({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MediReminderApp> createState() => _MediReminderAppState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MediReminderAppState extends State<MediReminderApp> {
   int selectedDateIndex = 0;
   List<DateTime> dateList =
       List.generate(10, (i) => DateTime.now().add(Duration(days: i)));
   List<Medicine> medicines = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMedicines();
+  }
+
+  Future<void> _loadMedicines() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('medicines');
+    if (saved != null) {
+      final List decoded = jsonDecode(saved);
+      setState(() {
+        medicines = decoded.map((m) => Medicine.fromMap(m)).toList();
+      });
+    }
+  }
+
+  Future<void> _saveMedicines() async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(medicines.map((m) => m.toMap()).toList());
+    await prefs.setString('medicines', encoded);
+  }
 
   void openAddMedicineSheet() {
     showModalBottomSheet(
@@ -61,16 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (_) => AddMedicineSheet(
         onSave: (medicine) {
-          setState(() => medicines.add(medicine));
+          setState(() {
+            medicines.add(medicine);
+          });
+          _saveMedicines();
         },
       ),
-    );
-  }
-
-  void openProfileScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
     );
   }
 
@@ -90,18 +113,30 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(currentMonth,
             style: const TextStyle(color: Colors.white, fontSize: 22)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.deepPurpleAccent,
         centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFA8C0FF), Color(0xFF667EEA)],
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_active),
+            tooltip: "Instant Test",
+            onPressed: () {
+              NotificationService.showInstantNotification();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("✅ Instant notification sent")),
+              );
+            },
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.alarm),
+            tooltip: "Fire Alarm",
+            onPressed: () {
+              NotificationService.fireReminderNotification();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("🚨 Fire reminder sent")),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -136,8 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             leading: Checkbox(
                               value: med.isChecked,
                               activeColor: Colors.deepPurple,
-                              onChanged: (val) =>
-                                  setState(() => med.isChecked = val!),
+                              onChanged: (val) {
+                                setState(() => med.isChecked = val!);
+                                _saveMedicines();
+                              },
                             ),
                             title: Text(med.name,
                                 style: const TextStyle(
@@ -161,32 +198,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: const BottomAppBar(
         color: Colors.white,
-        shape: const CircularNotchedRectangle(),
+        shape: CircularNotchedRectangle(),
         notchMargin: 8,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_)=>HomePage()));
-                },
-                child: const Icon(Icons.home, color: Colors.black54),
-              ),
-              //const Icon(Icons.home, color: Colors.black54),
-              const Icon(Icons.note_alt_outlined, color: Colors.black54),
-              const SizedBox(width: 40),
-              GestureDetector(
-                onTap: openProfileScreen,
-                child: const Icon(Icons.person_outline, color: Colors.black54),
-              ),
-              const Icon(Icons.menu, color: Colors.black54),
-            ],
-          ),
-        ),
+        child: SizedBox(height: 60),
       ),
     );
   }
@@ -413,7 +429,6 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
 
               final timeStr = ['Morning', 'Afternoon', 'Evening'];
 
-              // ✅ Combine selected date & time into DateTime
               final scheduledDate = DateTime(
                 _selectedDate.year,
                 _selectedDate.month,
@@ -422,15 +437,14 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
                 _selectedTime.minute,
               );
 
-              // ✅ Schedule ALARM instead of normal notification
-              NotificationService.scheduleAlarm(
+              // ✅ Schedule a notification for medicine
+              NotificationService.scheduleNotification(
                 id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-                title: "⏰ Time to take ${_nameController.text.trim()} 💊",
+                title: "💊 Time to take ${_nameController.text.trim()}",
                 body: "${_doseCount} dose(s) - ${_types[_selectedTypeIndex]}",
                 scheduledDate: scheduledDate,
               );
 
-              // ✅ Save medicine entry to list
               widget.onSave(
                 Medicine(
                   name: _nameController.text.trim(),
@@ -456,24 +470,6 @@ class _AddMedicineSheetState extends State<AddMedicineSheet> {
           ),
           const SizedBox(height: 20),
         ],
-      ),
-    );
-  }
-}
-
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-        backgroundColor: Colors.deepPurpleAccent,
-      ),
-      body: const Center(
-        child: Text("User Profile Page", style: TextStyle(fontSize: 20)),
       ),
     );
   }

@@ -55,7 +55,7 @@ class _LoginState extends State<LoginScreen> {
       backgroundColor: const Color(0xFFEFFAF9),
       body: Stack(
         children: [
-            Image.asset('assets/bk.jpg',fit: BoxFit.cover,height: double.infinity,),
+            Image.asset('assets/bk1.jpeg',fit: BoxFit.cover,height: double.infinity,width: double.infinity,),
           Column(
             children: [
               const Spacer(),

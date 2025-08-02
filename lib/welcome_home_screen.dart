@@ -11,7 +11,7 @@ class WelcomeHomeScreen extends StatelessWidget {
       //backgroundColor: const Color(0xFF4D9B91), // Custom teal color
       body: Stack(
         children: [
-          Image.asset('assets/bk.jpg',fit: BoxFit.cover,height: double.infinity,),
+          Image.asset('assets/bk1.jpeg',fit: BoxFit.cover,height: double.infinity,width: double.infinity,),
          
           Column(
             //mainAxisAlignment: MainAxisAlignment.center,

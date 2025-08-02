@@ -96,7 +96,7 @@ class _SignUpState extends State<SignUpScreen> {
       body: Stack(
         children: [
           // ✅ Gradient Background
-            Image.asset('assets/bk.jpg',fit: BoxFit.cover,height: double.infinity,),
+            Image.asset('assets/bk1.jpeg',fit: BoxFit.cover,height: double.infinity,width: double.infinity,),
           Column(
             children: [
               Expanded(
