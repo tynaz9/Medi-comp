@@ -100,18 +100,18 @@ class _WeightscreenState extends State<Weightscreen> {
                         ),
                       ),
                     ),
-                    Image.network(
+                    Image.asset(
                         pose['gif']!,
                         height: 300,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(child: CircularProgressIndicator());
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(child: Text("Image failed to load"));
-                        },
+                        // loadingBuilder: (context, child, loadingProgress) {
+                        //   if (loadingProgress == null) return child;
+                        //   return const Center(child: CircularProgressIndicator());
+                        // },
+                        // errorBuilder: (context, error, stackTrace) {
+                        //   return const Center(child: Text("Image failed to load"));
+                        // },
                       ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

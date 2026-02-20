@@ -23,73 +23,66 @@ class NotificationTestScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // 🔘 Show Instant Notification
+            // 🔘 Instant Notification
             ElevatedButton(
               onPressed: () {
                 NotificationService.showInstantNotification();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("✅ Instant notification sent")),
+                  const SnackBar(
+                    content: Text("✅ Instant notification sent"),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),
-              child: const Text("🔔 Show Instant Notification",
-                  style: TextStyle(fontSize: 16)),
+              child: const Text(
+                "🔔 Show Instant Notification",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 20),
 
-            // 🔘 Schedule Test Notification (5 sec)
-            ElevatedButton(
-              onPressed: () {
-                //NotificationService.scheduleTestNotification();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("✅ Notification scheduled for 5 sec later")),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              ),
-              child: const Text("⏱ Schedule Test Notification (5 sec)",
-                  style: TextStyle(fontSize: 16)),
-            ),
-
-            const SizedBox(height: 15),
-
-            // 🔘 Schedule Real Reminder (1 min later)
+            // 🔘 Schedule Test Reminder (1 min later)
             ElevatedButton(
               onPressed: () {
                 NotificationService.scheduleNotification(
-                  id: 2,
-                  title: "💊 Medicine Reminder",
-                  body: "It's time to take your pill!",
-                  scheduledDate: DateTime.now().add(const Duration(minutes: 1)),
+                  id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                  medicineName: "Paracetamol",
+                  doseInfo: "1 dose - Tablets",
+                  scheduledDate:
+                      DateTime.now().add(const Duration(minutes: 1)),
                 );
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("✅ Reminder set for 1 minute later")),
+                  const SnackBar(
+                    content:
+                        Text("✅ Medicine reminder scheduled (1 minute later)"),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),
-              child: const Text("💊 Schedule Medicine Reminder (1 min)",
-                  style: TextStyle(fontSize: 16)),
+              child: const Text(
+                "💊 Schedule Medicine Reminder (1 min)",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-  onPressed: () {
-    //NotificationService.fakeScheduledNotification();
-  },
-  child: const Icon(Icons.alarm),
+        onPressed: () {
+          NotificationService.showInstantNotification();
+        },
+        child: const Icon(Icons.alarm),
 ),
-
     );
   }
 }

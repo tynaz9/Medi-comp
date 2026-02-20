@@ -1,25 +1,29 @@
-import 'package:f_medi_minders/landing_screen.dart';
+import 'package:f_medi_minders/landing_page/landing_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:device_preview/device_preview.dart';
+//import 'package:device_preview/device_preview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ✅ Import notification service
 import 'services/notification_service.dart';
-
+import "Name_SetUp/name_setup_screen.dart";
 Future<void> main() async {
-  // ✅ Ensure Flutter is fully initialized before any plugins run
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize notification service (local notifications, timezone setup)
+  // Initialize notifications
   await NotificationService.init();
 
-  // ✅ Run app with DevicePreview for easier testing on multiple devices
+  // Check if name already saved
+  final prefs = await SharedPreferences.getInstance();
+  final name = prefs.getString("username");
+
   runApp(
-    DevicePreview(
-      enabled: true, // set to false for production
-      builder: (_) => const MediMinderApp(),
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: name == null
+          ? const NameSetupScreen()
+          : const LandingPage(),
     ),
   );
-  //runApp(const MediMinderApp());
 }
 
 class MediMinderApp extends StatelessWidget {
